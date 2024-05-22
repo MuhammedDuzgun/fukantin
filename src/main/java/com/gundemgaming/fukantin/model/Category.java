@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,5 +21,8 @@ public class Category {
     private Long id;
 
     private String category;
+
+    @OneToMany(mappedBy = "category")
+    private List<Post> posts;
 
 }

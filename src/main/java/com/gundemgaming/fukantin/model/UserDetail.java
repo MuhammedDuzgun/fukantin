@@ -24,4 +24,7 @@ public class UserDetail {
 
     private String biography;
 
+    @OneToOne(mappedBy = "userDetail")
+    private User user;
+
 }

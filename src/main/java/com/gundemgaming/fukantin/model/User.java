@@ -48,4 +48,25 @@ public class User {
     )
     private UserDetail userDetail;
 
+    @ManyToMany(
+            fetch = FetchType.EAGER,
+            cascade = CascadeType.ALL
+    )
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
+    )
+    private Set<Role> roles;
+
+    @PrePersist
+    public void prePersist() {
+        if(this.userDetail == null) {
+            userDetail = new UserDetail();
+            userDetail.setDepartment("fakulte girilmemis");
+            userDetail.setInstagram("instagram girilmemis");
+            userDetail.setBiography("biyografi girilmemis");
+        }
+    }
+
 }

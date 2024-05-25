@@ -18,6 +18,7 @@ public class Reply {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "reply", nullable = false)
     private String reply;
 
     private String date;

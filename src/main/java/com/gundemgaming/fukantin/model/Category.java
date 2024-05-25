@@ -20,6 +20,7 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "category", nullable = false, unique = true)
     private String category;
 
     @OneToMany(mappedBy = "category")

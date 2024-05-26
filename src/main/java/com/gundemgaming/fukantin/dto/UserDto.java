@@ -1,16 +1,16 @@
 package com.gundemgaming.fukantin.dto;
 
-import com.gundemgaming.fukantin.model.Post;
-import com.gundemgaming.fukantin.model.Reply;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class UserDto {
     private Long id;
     private String username;
-    private List<Post> posts;
-    private List<Reply> replies;
-    private Long userDetailId;
+    private List<PostDto> posts;
+    private List<ReplyDto> replies;
+    private UserDetailDto userDetail;
+    private Set<RoleDto> roles;
 }

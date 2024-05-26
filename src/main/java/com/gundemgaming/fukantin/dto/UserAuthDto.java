@@ -22,6 +22,7 @@ public class UserAuthDto {
     @NotEmpty(
             message = "Sifre bos birakilamaz."
     )
+    @NotNull
     @Size(
             min = 4,
             max = 16,

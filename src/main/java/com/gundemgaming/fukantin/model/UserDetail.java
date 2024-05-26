@@ -1,10 +1,8 @@
 package com.gundemgaming.fukantin.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
@@ -24,7 +22,8 @@ public class UserDetail {
 
     private String biography;
 
-    @OneToOne(mappedBy = "userDetail")
+    @OneToOne(mappedBy = "userDetail", fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 
 }

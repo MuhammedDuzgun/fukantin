@@ -11,9 +11,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements IUserService {
@@ -31,12 +30,15 @@ public class UserService implements IUserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        return null;
+        List<User> users = userRepository.findAll();
+
+        return users.stream().map(user -> modelMapper.map(user, UserDto.class)).collect(Collectors.toList());
     }
 
     @Override
     public UserDto getUser(Long userId) {
-        return null;
+        User user = userRepository.findById(userId).get();
+        return modelMapper.map(user, UserDto.class);
     }
 
     @Override
@@ -61,11 +63,26 @@ public class UserService implements IUserService {
 
     @Override
     public UserAuthDto updateUser(UserAuthDto userAuthDto, Long userId) {
-        return null;
+        //check is user exists
+        if(!userRepository.existsById(userId)) {
+            //boyle bir kullanıcı yok hata mesajı fırlat
+        }
+
+        User userToUpdate = userRepository.findById(userId).get();
+
+        userToUpdate.setUsername(userAuthDto.getUsername());
+        userToUpdate.setPassword(userAuthDto.getPassword());
+
+        userRepository.save(userToUpdate);
+
+        return modelMapper.map(userToUpdate, UserAuthDto.class);
     }
 
     @Override
     public void deleteUser(Long userId) {
+        User userToDelete = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("Boyle bir Kullanıcı Yok"));
 
+        userRepository.delete(userToDelete);
     }
 }

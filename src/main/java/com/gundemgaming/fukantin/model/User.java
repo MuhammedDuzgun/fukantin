@@ -42,6 +42,7 @@ public class User {
     private List<Reply> replies;
 
     @OneToOne(
+            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
@@ -70,6 +71,11 @@ public class User {
             userDetail.setInstagram("instagram girilmemis");
             userDetail.setBiography("biyografi girilmemis");
         }
+    }
+
+    @PreRemove
+    public void preRemove() {
+        roles.clear();
     }
 
 }

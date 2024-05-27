@@ -2,7 +2,9 @@ package com.gundemgaming.fukantin.dto;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+@Data
 public class ReplyDto {
 
     private Long id;
@@ -15,5 +17,5 @@ public class ReplyDto {
             message = "Reply en fazla 50 karakter icerebilir."
     )
     private String reply;
-
+    private String date;
 }

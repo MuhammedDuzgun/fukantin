@@ -1,6 +1,8 @@
 package com.gundemgaming.fukantin.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.gundemgaming.fukantin.model.Category;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -29,8 +31,10 @@ public class PostDto {
             message = "Post en fazla 250 karakter icerebilir."
     )
     private String post;
-
+    private String date;
     private List<ReplyDto> replies;
     private Long categoryId;
+    @JsonIgnore
+    private UserDto user;
 
 }

@@ -23,7 +23,7 @@ public class Category {
     @Column(name = "category", nullable = false, unique = true)
     private String category;
 
-    @OneToMany(mappedBy = "category")
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Post> posts;
 
 }

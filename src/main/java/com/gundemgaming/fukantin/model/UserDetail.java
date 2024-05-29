@@ -1,6 +1,5 @@
 package com.gundemgaming.fukantin.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,14 +15,16 @@ public class UserDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "department")
     private String department;
 
+    @Column(name = "instagram")
     private String instagram;
 
+    @Column(name = "biography")
     private String biography;
 
     @OneToOne(mappedBy = "userDetail", fetch = FetchType.LAZY)
-    @JsonIgnore
     private User user;
 
 }

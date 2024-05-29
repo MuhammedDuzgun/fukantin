@@ -3,6 +3,7 @@ package com.gundemgaming.fukantin.controller;
 import com.gundemgaming.fukantin.dto.UserAuthDto;
 import com.gundemgaming.fukantin.dto.UserDto;
 import com.gundemgaming.fukantin.service.IUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +33,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserAuthDto userAuthDto) {
+    public ResponseEntity<String> createUser(@Valid @RequestBody UserAuthDto userAuthDto) {
         UserAuthDto createdUser = userService.createUser(userAuthDto);
         return new ResponseEntity<>("User Created Successfuly", HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@RequestBody UserAuthDto userAuthDto,
+    public ResponseEntity<String> updateUser(@Valid @RequestBody UserAuthDto userAuthDto,
                                              @PathVariable(name = "id")  Long userId) {
         userService.updateUser(userAuthDto, userId);
         return new ResponseEntity<>("User Updated Successfuly", HttpStatus.OK);

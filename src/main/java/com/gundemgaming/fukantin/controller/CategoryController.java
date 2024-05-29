@@ -2,6 +2,7 @@ package com.gundemgaming.fukantin.controller;
 
 import com.gundemgaming.fukantin.dto.CategoryDto;
 import com.gundemgaming.fukantin.service.ICategoryService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +33,13 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<CategoryDto> createCategory(@Valid @RequestBody CategoryDto categoryDto) {
         CategoryDto createdCategory = categoryService.createCategory(categoryDto);
         return new ResponseEntity<>(createdCategory, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto categoryDto,
+    public ResponseEntity<CategoryDto> updateCategory(@Valid @RequestBody CategoryDto categoryDto,
                                                       @PathVariable(name = "id") Long categoryId) {
         CategoryDto updatedCategory = categoryService.updateCategory(categoryDto, categoryId);
         return new ResponseEntity<>(updatedCategory, HttpStatus.OK);

@@ -2,6 +2,7 @@ package com.gundemgaming.fukantin.controller;
 
 import com.gundemgaming.fukantin.dto.PostDto;
 import com.gundemgaming.fukantin.service.IPostService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,14 +37,14 @@ public class PostController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<PostDto> createPost(@RequestBody PostDto postDto,
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto,
                                               @PathVariable(name = "id") Long userId) {
          PostDto createdPost = postService.createPost(postDto, userId);
          return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto,
+    public ResponseEntity<PostDto> updatePost(@Valid @RequestBody PostDto postDto,
                                               @PathVariable(name = "id") Long postId) {
          return ResponseEntity.ok(postService.updatePost(postDto, postId));
     }

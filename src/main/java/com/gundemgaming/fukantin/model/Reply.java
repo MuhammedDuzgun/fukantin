@@ -1,5 +1,6 @@
 package com.gundemgaming.fukantin.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,8 +28,9 @@ public class Reply {
     @JoinColumn(name = "post_id")
     private Post post;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
 }

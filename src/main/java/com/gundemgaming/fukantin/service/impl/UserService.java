@@ -2,6 +2,8 @@ package com.gundemgaming.fukantin.service.impl;
 
 import com.gundemgaming.fukantin.dto.UserAuthDto;
 import com.gundemgaming.fukantin.dto.UserDto;
+import com.gundemgaming.fukantin.exception.FuKantinAPIException;
+import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
 import com.gundemgaming.fukantin.model.Role;
 import com.gundemgaming.fukantin.model.User;
 import com.gundemgaming.fukantin.repository.IRoleRepository;
@@ -9,6 +11,7 @@ import com.gundemgaming.fukantin.repository.IUserRepository;
 import com.gundemgaming.fukantin.service.IUserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -37,7 +40,10 @@ public class UserService implements IUserService {
 
     @Override
     public UserDto getUser(Long userId) {
-        User user = userRepository.findById(userId).get();
+        //check is user exists
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", userId));
+
         return modelMapper.map(user, UserDto.class);
     }
 
@@ -45,7 +51,7 @@ public class UserService implements IUserService {
     public UserAuthDto createUser(UserAuthDto userAuthDto) {
         //check is username exists
         if(userRepository.existsByUsername(userAuthDto.getUsername())) {
-            //gerekli islemler
+            throw new FuKantinAPIException("Username with : " + userAuthDto.getUsername() + " is already exists", HttpStatus.BAD_REQUEST);
         }
 
         User user = new User();
@@ -64,11 +70,8 @@ public class UserService implements IUserService {
     @Override
     public UserAuthDto updateUser(UserAuthDto userAuthDto, Long userId) {
         //check is user exists
-        if(!userRepository.existsById(userId)) {
-            //boyle bir kullanıcı yok hata mesajı fırlat
-        }
-
-        User userToUpdate = userRepository.findById(userId).get();
+        User userToUpdate = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
         userToUpdate.setUsername(userAuthDto.getUsername());
         userToUpdate.setPassword(userAuthDto.getPassword());
@@ -80,8 +83,9 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteUser(Long userId) {
+        //check is user exists
         User userToDelete = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Boyle bir Kullanıcı Yok"));
+                .orElseThrow(() -> new ResourceNotFoundException("User", "userId", userId));
 
         userRepository.delete(userToDelete);
     }

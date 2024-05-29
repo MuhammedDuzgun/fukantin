@@ -1,12 +1,15 @@
 package com.gundemgaming.fukantin.service.impl;
 
 import com.gundemgaming.fukantin.dto.UserDetailDto;
+import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
 import com.gundemgaming.fukantin.model.User;
 import com.gundemgaming.fukantin.model.UserDetail;
 import com.gundemgaming.fukantin.repository.IUserDetailRepository;
 import com.gundemgaming.fukantin.repository.IUserRepository;
 import com.gundemgaming.fukantin.service.IUserDetailService;
+
 import org.modelmapper.ModelMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,39 +28,23 @@ public class UserDetailService implements IUserDetailService {
     }
 
     @Override
-    public UserDetailDto getUserDetail(Long userId, Long userDetailId) {
+    public UserDetailDto getUserDetail(Long userId) {
         //check is user exists
-        if(!userRepository.existsById(userId)) {
-            //boyle bir kullanici yok
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", userId));
 
-        //check is userDetailId belongs to user
-        User user = userRepository.findById(userId).get();
-        if(user.getUserDetail().getId() != userDetailId) {
-            //userDetail user'a ait degil
-        }
-
-        UserDetail userDetail = userDetailRepository.findById(userDetailId)
-                .orElseThrow(() -> new IllegalArgumentException("Boyle bir userDetail yok"));
+        UserDetail userDetail = user.getUserDetail();
 
         return modelMapper.map(userDetail, UserDetailDto.class);
     }
 
     @Override
-    public UserDetailDto updateUserDetail(UserDetailDto userDetailDto, Long userId, Long userDetailId) {
+    public UserDetailDto updateUserDetail(UserDetailDto userDetailDto, Long userId) {
         //check is user exists
-        if(!userRepository.existsById(userId)) {
-            //boyle bir kullanici yok
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", userId));
 
-        //check is userDetailId belongs to user
-        User user = userRepository.findById(userId).get();
-        if(user.getUserDetail().getId() != userDetailId) {
-            //userDetail user'a ait degil
-        }
-
-        UserDetail userDetail = userDetailRepository.findById(userDetailId)
-                .orElseThrow(() -> new IllegalArgumentException("Boyle bir userDetail yok"));
+        UserDetail userDetail = user.getUserDetail();
 
         userDetail.setDepartment(userDetailDto.getDepartment());
         userDetail.setInstagram(userDetailDto.getInstagram());

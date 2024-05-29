@@ -1,6 +1,7 @@
 package com.gundemgaming.fukantin.service.impl;
 
 import com.gundemgaming.fukantin.dto.CategoryDto;
+import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
 import com.gundemgaming.fukantin.model.Category;
 import com.gundemgaming.fukantin.repository.ICategoryRepository;
 import com.gundemgaming.fukantin.service.ICategoryService;
@@ -32,7 +33,7 @@ public class CategoryService implements ICategoryService {
     @Override
     public CategoryDto getCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir category yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Category", "categoryId", categoryId));
         return modelMapper.map(category, CategoryDto.class);
     }
 
@@ -46,7 +47,7 @@ public class CategoryService implements ICategoryService {
     public CategoryDto updateCategory(CategoryDto categoryDto, Long categoryId) {
         //check is category exists
         Category categoryToUpdate = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Boyle bir Category yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         categoryToUpdate.setCategory(categoryDto.getCategory());
 
@@ -59,7 +60,7 @@ public class CategoryService implements ICategoryService {
     public void deleteCategory(Long categoryId) {
         //check is category exists
         Category categoryToDelete = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("Boyle bir Category yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Category", "categoryId", categoryId));
 
         categoryRepository.delete(categoryToDelete);
     }

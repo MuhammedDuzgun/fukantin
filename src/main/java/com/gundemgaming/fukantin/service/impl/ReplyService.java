@@ -1,6 +1,8 @@
 package com.gundemgaming.fukantin.service.impl;
 
 import com.gundemgaming.fukantin.dto.ReplyDto;
+import com.gundemgaming.fukantin.exception.FuKantinAPIException;
+import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
 import com.gundemgaming.fukantin.model.Post;
 import com.gundemgaming.fukantin.model.Reply;
 import com.gundemgaming.fukantin.model.User;
@@ -10,8 +12,10 @@ import com.gundemgaming.fukantin.repository.IUserRepository;
 import com.gundemgaming.fukantin.service.IReplyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +38,11 @@ public class ReplyService implements IReplyService {
 
     @Override
     public List<ReplyDto> getAllRepliesByPostId(Long postId) {
+        //check is post exists
+        if(!postRepository.existsById(postId)) {
+            throw new ResourceNotFoundException("Post", "postId", postId);
+        }
+
         List<ReplyDto> replies = replyRepository.findByPostId(postId)
                 .stream().map(reply -> modelMapper.map(reply, ReplyDto.class)).collect(Collectors.toList());
         return replies;
@@ -41,8 +50,18 @@ public class ReplyService implements IReplyService {
 
     @Override
     public ReplyDto getReply(Long postId, Long replyId) {
+        //check is post exists
+        Post post = postRepository.findById(postId)
+                .orElseThrow(()-> new ResourceNotFoundException("Post", "postId", postId));
+
+        //check is reply exists
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir reply yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Reply", "replyId", replyId));
+
+        //check is reply belongs to post
+        if(reply.getPost().getId() != post.getId()) {
+            throw new FuKantinAPIException("Reply doesn't belongs to Post", HttpStatus.BAD_REQUEST);
+        }
 
         return modelMapper.map(reply, ReplyDto.class);
     }
@@ -54,10 +73,11 @@ public class ReplyService implements IReplyService {
 
         //check post
         Post post = postRepository.findById(postId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir post yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Post", "postId", postId));
 
+        //check user
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir user yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", userId));
 
         //set post & user
         reply.setUser(user);
@@ -65,7 +85,9 @@ public class ReplyService implements IReplyService {
 
         //set date
         Date dateNow = new Date();
-        reply.setDate(dateNow.toString());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        String formattedDate = dateFormat.format(dateNow);
+        reply.setDate(formattedDate);
 
         //save reply
         replyRepository.save(reply);
@@ -75,15 +97,17 @@ public class ReplyService implements IReplyService {
 
     @Override
     public ReplyDto updateReply(ReplyDto replyDto, Long postId, Long replyId) {
+        //check is post exists
         Post post = postRepository.findById(postId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir post yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Post", "postId", postId));
 
+        //check is reply exists
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir reply yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Reply", "replyId", replyId));
 
         //is reply belongs to post
         if(reply.getPost().getId() != post.getId()) {
-            throw new IllegalStateException("Bu reply bu posta ait degil");
+            throw new FuKantinAPIException("Reply doesn't belongs to Post", HttpStatus.BAD_REQUEST);
         }
 
         reply.setReply(replyDto.getReply());
@@ -95,15 +119,17 @@ public class ReplyService implements IReplyService {
 
     @Override
     public void deleteReply(Long postId, Long replyId) {
+        //check is post exists
         Post post = postRepository.findById(postId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir post yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Post", "postId", postId));
 
+        //check is reply exists
         Reply reply = replyRepository.findById(replyId)
-                .orElseThrow(()-> new IllegalArgumentException("Boyle bir reply yok"));
+                .orElseThrow(()-> new ResourceNotFoundException("Reply", "replyId", replyId));
 
         //is reply belongs to post
         if(reply.getPost().getId() != post.getId()) {
-            throw new IllegalStateException("Bu reply bu posta ait degil");
+            throw new FuKantinAPIException("Reply doesn't belongs to Post", HttpStatus.BAD_REQUEST);
         }
 
         replyRepository.delete(reply);

@@ -1,6 +1,7 @@
 package com.gundemgaming.fukantin.service.impl;
 
 import com.gundemgaming.fukantin.dto.PostDto;
+import com.gundemgaming.fukantin.dto.PostResponse;
 import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
 import com.gundemgaming.fukantin.model.Post;
 import com.gundemgaming.fukantin.model.User;
@@ -10,6 +11,10 @@ import com.gundemgaming.fukantin.repository.IUserRepository;
 import com.gundemgaming.fukantin.service.IPostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -34,10 +39,29 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public List<PostDto> getAllPosts() {
-        List<PostDto> posts = postRepository.findAll()
-                .stream().map(post -> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
-        return posts;
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
+        //Sort
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        //create Pageable instance
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+
+        Page<Post> posts = postRepository.findAll(pageable);
+
+        List<Post> postList = posts.getContent();
+
+        List<PostDto> content = postList.stream().map(post -> modelMapper.map(post, PostDto.class)).collect(Collectors.toList());
+
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+        postResponse.setLast(posts.isLast());
+
+        return postResponse;
     }
 
     @Override

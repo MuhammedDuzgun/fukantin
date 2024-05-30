@@ -1,7 +1,9 @@
 package com.gundemgaming.fukantin.controller;
 
 import com.gundemgaming.fukantin.dto.PostDto;
+import com.gundemgaming.fukantin.dto.PostResponse;
 import com.gundemgaming.fukantin.service.IPostService;
+import com.gundemgaming.fukantin.utils.AppConstants;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +24,13 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDto>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<PostResponse> getAllPosts(
+            @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NO, required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.DEFAULT_PAGE_SIZE, required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.DEFAULT_SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.DEFAULT_SORT_DIR, required = false) String sortDir
+    ) {
+        return ResponseEntity.ok(postService.getAllPosts(pageNo, pageSize, sortBy, sortDir));
     }
 
     @GetMapping("category/{id}")

@@ -53,7 +53,7 @@ public class User {
     private UserDetail userDetail;
 
     @ManyToMany(
-            fetch = FetchType.LAZY,
+            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
     @JoinTable(

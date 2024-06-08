@@ -9,7 +9,7 @@ public interface IReplyService {
 
     List<ReplyDto> getAllRepliesByPostId(Long postId);
     ReplyDto getReply(Long postId, Long replyId);
-    ReplyDto createReply(ReplyDto replyDto, Long postId, Long userId);
+    ReplyDto createReply(ReplyDto replyDto, Long postId);
     ReplyDto updateReply(ReplyDto replyDto, Long postId, Long replyId);
     void deleteReply(Long postId, Long replyId);
 

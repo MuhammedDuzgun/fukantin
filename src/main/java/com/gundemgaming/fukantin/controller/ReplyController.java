@@ -32,11 +32,10 @@ public class ReplyController {
         return ResponseEntity.ok(replyService.getReply(postId, replyId));
     }
 
-    @PostMapping("/posts/{postId}/replies/{userId}")
+    @PostMapping("/posts/{postId}/replies")
     public ResponseEntity<ReplyDto> createReply(@Valid @RequestBody ReplyDto replyDto,
-                                                @PathVariable(name = "postId") Long postId,
-                                                @PathVariable(name = "userId") Long userId) {
-        ReplyDto createdReply = replyService.createReply(replyDto, postId, userId);
+                                                @PathVariable(name = "postId") Long postId) {
+        ReplyDto createdReply = replyService.createReply(replyDto, postId);
         return new ResponseEntity<>(createdReply, HttpStatus.CREATED);
     }
 

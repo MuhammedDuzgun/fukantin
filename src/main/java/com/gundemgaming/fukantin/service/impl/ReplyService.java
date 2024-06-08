@@ -13,6 +13,8 @@ import com.gundemgaming.fukantin.service.IReplyService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -67,7 +69,7 @@ public class ReplyService implements IReplyService {
     }
 
     @Override
-    public ReplyDto createReply(ReplyDto replyDto, Long postId, Long userId) {
+    public ReplyDto createReply(ReplyDto replyDto, Long postId) {
         //convert replyDto to entity
         Reply reply = modelMapper.map(replyDto, Reply.class);
 
@@ -76,8 +78,10 @@ public class ReplyService implements IReplyService {
                 .orElseThrow(()-> new ResourceNotFoundException("Post", "postId", postId));
 
         //check user
-        User user = userRepository.findById(userId)
-                .orElseThrow(()-> new ResourceNotFoundException("User", "userId", userId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        User user = userRepository.findByUsername(login).get();
+
 
         //set post & user
         reply.setUser(user);

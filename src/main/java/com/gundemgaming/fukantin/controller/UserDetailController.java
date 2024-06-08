@@ -23,11 +23,9 @@ public class UserDetailController {
         return ResponseEntity.ok(userDetailService.getUserDetail(userId));
     }
 
-    @PutMapping("/users/{userId}/userdetails")
-    public ResponseEntity<UserDetailDto> updateUserDetail(@Valid @RequestBody UserDetailDto userDetailDto,
-                                                          @PathVariable(name = "userId") Long userId) {
-
-        return ResponseEntity.ok(userDetailService.updateUserDetail(userDetailDto, userId));
+    @PutMapping("/users/userdetails")
+    public ResponseEntity<UserDetailDto> updateUserDetail(@Valid @RequestBody UserDetailDto userDetailDto) {
+        return ResponseEntity.ok(userDetailService.updateUserDetail(userDetailDto));
     }
 
 }

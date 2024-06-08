@@ -1,5 +1,6 @@
 package com.gundemgaming.fukantin.service.impl;
 
+import com.gundemgaming.fukantin.dto.CustomUserDetails;
 import com.gundemgaming.fukantin.dto.PostDto;
 import com.gundemgaming.fukantin.dto.PostResponse;
 import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
@@ -15,6 +16,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -84,13 +89,14 @@ public class PostService implements IPostService {
     }
 
     @Override
-    public PostDto createPost(PostDto postDto, Long userId) {
+    public PostDto createPost(PostDto postDto) {
         //convert dto to entity
         Post postToCreate = modelMapper.map(postDto, Post.class);
 
         //Get user
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User" , "userId", userId));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        User user = userRepository.findByUsername(login).get();
 
         //set user
         postToCreate.setUser(user);

@@ -43,10 +43,9 @@ public class PostController {
         return ResponseEntity.ok(postService.getPost(postId));
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto,
-                                              @PathVariable(name = "id") Long userId) {
-         PostDto createdPost = postService.createPost(postDto, userId);
+    @PostMapping
+    public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
+         PostDto createdPost = postService.createPost(postDto);
          return new ResponseEntity<>(createdPost, HttpStatus.CREATED);
     }
 

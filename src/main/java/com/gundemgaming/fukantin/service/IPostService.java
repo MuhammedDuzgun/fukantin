@@ -11,7 +11,7 @@ public interface IPostService {
     PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir);
     List<PostDto> getAllPostsWithCategory(Long categoryId);
     PostDto getPost(Long postId);
-    PostDto createPost(PostDto postDto, Long userId);
+    PostDto createPost(PostDto postDto);
     PostDto updatePost(PostDto postDto, Long postId);
     void deletePost(Long postId);
 

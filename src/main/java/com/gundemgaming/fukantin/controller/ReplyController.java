@@ -2,6 +2,7 @@ package com.gundemgaming.fukantin.controller;
 
 import com.gundemgaming.fukantin.dto.ReplyDto;
 import com.gundemgaming.fukantin.service.IReplyService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,6 +33,9 @@ public class ReplyController {
         return ResponseEntity.ok(replyService.getReply(postId, replyId));
     }
 
+    @SecurityRequirement(
+            name = "Bearer Authentication"
+    )
     @PostMapping("/posts/{postId}/replies")
     public ResponseEntity<ReplyDto> createReply(@Valid @RequestBody ReplyDto replyDto,
                                                 @PathVariable(name = "postId") Long postId) {
@@ -39,6 +43,9 @@ public class ReplyController {
         return new ResponseEntity<>(createdReply, HttpStatus.CREATED);
     }
 
+    @SecurityRequirement(
+            name = "Bearer Authentication"
+    )
     @PutMapping("/posts/{postId}/replies/{replyId}")
     public ResponseEntity<ReplyDto> updateReply(@Valid @RequestBody ReplyDto replyDto,
                                                 @PathVariable(name = "postId") Long postId,
@@ -47,6 +54,9 @@ public class ReplyController {
        return new ResponseEntity<>(updatedReply, HttpStatus.OK);
     }
 
+    @SecurityRequirement(
+            name = "Bearer Authentication"
+    )
     @DeleteMapping("/posts/{postId}/replies/{replyId}")
     public ResponseEntity<String> deleteReply(@PathVariable(name = "postId") Long postId,
                                               @PathVariable(name = "replyId") Long replyId) {

@@ -2,6 +2,8 @@ package com.gundemgaming.fukantin.config;
 
 import com.gundemgaming.fukantin.security.JwtAuthenticationEntryPoint;
 import com.gundemgaming.fukantin.security.JwtAuthenticationFilter;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -20,6 +22,12 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+@SecurityScheme(
+        name = "Bearer Authentication",
+        type =  SecuritySchemeType.HTTP,
+        bearerFormat = "JWT",
+        scheme = "bearer"
+)
 @Configuration
 @EnableMethodSecurity
 public class SecurityConfig {
@@ -51,6 +59,8 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf-> csrf.disable())
                 .authorizeHttpRequests(authorize->
                         authorize
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("api/auth/**").permitAll()
                                 .requestMatchers("/api/categories/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()

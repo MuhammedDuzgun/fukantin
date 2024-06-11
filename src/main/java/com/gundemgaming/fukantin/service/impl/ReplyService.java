@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -77,11 +78,8 @@ public class ReplyService implements IReplyService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(()-> new ResourceNotFoundException("Post", "postId", postId));
 
-        //check user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName();
-        User user = userRepository.findByUsername(login).get();
-
+        //get current user
+        User user = getCurrentAuthenticatedUser();
 
         //set post & user
         reply.setUser(user);
@@ -110,8 +108,16 @@ public class ReplyService implements IReplyService {
                 .orElseThrow(()-> new ResourceNotFoundException("Reply", "replyId", replyId));
 
         //is reply belongs to post
-        if(reply.getPost().getId() != post.getId()) {
+        if(!Objects.equals(reply.getPost().getId(), post.getId())) {
             throw new FuKantinAPIException("Reply doesn't belongs to Post", HttpStatus.BAD_REQUEST);
+        }
+
+        //get current user
+        User user = getCurrentAuthenticatedUser();
+
+        //check is reply belongs to user
+        if(!Objects.equals(reply.getUser().getId(), user.getId())) {
+            throw new FuKantinAPIException("This reply doesn't belongs to current user", HttpStatus.BAD_REQUEST);
         }
 
         reply.setReply(replyDto.getReply());
@@ -136,7 +142,25 @@ public class ReplyService implements IReplyService {
             throw new FuKantinAPIException("Reply doesn't belongs to Post", HttpStatus.BAD_REQUEST);
         }
 
+        //get current user
+        User user = getCurrentAuthenticatedUser();
+
+        //check is reply belongs to user
+        if(!Objects.equals(reply.getUser().getId(), user.getId())) {
+            throw new FuKantinAPIException("This reply doesn't belongs to current user", HttpStatus.BAD_REQUEST);
+        }
+
         replyRepository.delete(reply);
+    }
+
+    //Get current user
+    private User getCurrentAuthenticatedUser() {
+        //Get user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        User user = userRepository.findByUsername(login).get();
+
+        return user;
     }
 
 }

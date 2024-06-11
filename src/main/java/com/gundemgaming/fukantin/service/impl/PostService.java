@@ -1,8 +1,8 @@
 package com.gundemgaming.fukantin.service.impl;
 
-import com.gundemgaming.fukantin.dto.CustomUserDetails;
 import com.gundemgaming.fukantin.dto.PostDto;
 import com.gundemgaming.fukantin.dto.PostResponse;
+import com.gundemgaming.fukantin.exception.FuKantinAPIException;
 import com.gundemgaming.fukantin.exception.ResourceNotFoundException;
 import com.gundemgaming.fukantin.model.Post;
 import com.gundemgaming.fukantin.model.User;
@@ -16,15 +16,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -93,10 +93,8 @@ public class PostService implements IPostService {
         //convert dto to entity
         Post postToCreate = modelMapper.map(postDto, Post.class);
 
-        //Get user
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String login = authentication.getName();
-        User user = userRepository.findByUsername(login).get();
+        //Get current user
+        User user = getCurrentAuthenticatedUser();
 
         //set user
         postToCreate.setUser(user);
@@ -119,6 +117,14 @@ public class PostService implements IPostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
 
+        //get current user
+        User user = getCurrentAuthenticatedUser();
+
+        //check is post belongs to user
+        if(!Objects.equals(post.getUser().getId(), user.getId())) {
+            throw new FuKantinAPIException("This post doesn't belongs to current user", HttpStatus.BAD_REQUEST);
+        }
+
         post.setTitle(postDto.getTitle());
         post.setPost(postDto.getPost());
 
@@ -129,8 +135,29 @@ public class PostService implements IPostService {
 
     @Override
     public void deletePost(Long postId) {
+        //get post
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("Post", "postId", postId));
+
+        //get current user
+        User user = getCurrentAuthenticatedUser();
+
+        //check is post belongs to user
+        if(!Objects.equals(post.getUser().getId(), user.getId())) {
+            throw new FuKantinAPIException("This post doesn't belongs to current user", HttpStatus.BAD_REQUEST);
+        }
+
         postRepository.delete(post);
     }
+
+    //Get current user
+    private User getCurrentAuthenticatedUser() {
+        //Get user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String login = authentication.getName();
+        User user = userRepository.findByUsername(login).get();
+
+        return user;
+    }
+
 }

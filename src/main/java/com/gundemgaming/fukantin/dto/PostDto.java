@@ -26,4 +26,5 @@ public class PostDto {
     private List<ReplyDto> replies;
     private Long categoryId;
     private Long userId;
+
 }

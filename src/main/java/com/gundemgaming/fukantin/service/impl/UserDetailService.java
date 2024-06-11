@@ -57,4 +57,5 @@ public class UserDetailService implements IUserDetailService {
 
         return modelMapper.map(userDetail, UserDetailDto.class);
     }
+
 }

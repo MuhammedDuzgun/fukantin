@@ -18,4 +18,6 @@ public class ReplyDto {
     )
     private String reply;
     private String date;
+    private Long userId;
+
 }

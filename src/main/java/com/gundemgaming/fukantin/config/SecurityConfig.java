@@ -63,9 +63,9 @@ public class SecurityConfig {
                                 .requestMatchers("/v3/api-docs/**").permitAll()
                                 .requestMatchers("api/auth/**").permitAll()
                                 .requestMatchers("/api/categories/**").hasRole("ADMIN")
-                                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
-                                .requestMatchers("/api/users/userdetails/**").authenticated()
+                                .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll()
                                 .requestMatchers( "/api/users/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                                 .anyRequest().authenticated()
 
                 ).exceptionHandling(exception-> exception

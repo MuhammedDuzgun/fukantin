@@ -6,6 +6,18 @@
 * Users can make comments, called replies, on posts shared by other users.
 * Users can use their own names or create anonymous accounts
 
+# Web API features
+* CRUD operations for all entities
+* Spring Data JPA and Hibernate 
+* Pagination and sorting support
+* DTO (Data Transfer Object) 
+* Used Model Mapper to convert Entity to DTO or DTO to Entity
+* Custom exception handler mechanism
+* Spring validation 
+* Authentication & Authorization 
+* JWT Token
+* Documentation with SpringDoc-OpenAPI - Swagger
+
 ### Instructions
 * Fork this repository
 * Clone the forked repository
